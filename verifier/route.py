@@ -1,4 +1,4 @@
-"""The plan-flight-route task's check: any route of real nonstop flights passes, however many it takes: not one fixed
+"""The plan-flight-route task's check: any route of real flights passes, however many it takes: not one fixed
 answer and not only the shortest."""
 
 from contract import Status
@@ -21,4 +21,4 @@ def verify_task(arguments, output, reference, workspace):
         return result(False, problem.pop("message"), score=score, **problem)
     legs = len(output.airports) - 1
     fewest = fewest_legs(origins, destinations)
-    return result(True, f"a route of {legs} real nonstop flight(s); the fewest is {fewest}", airports=output.airports)
+    return result(True, f"a route of {legs} real flight(s); the fewest is {fewest}", airports=output.airports)

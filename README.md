@@ -2,9 +2,9 @@
 
 A `nanoagent.plugin/v0001` plugin. The agent is given an origin and a destination, each an airport's IATA code (such
 as `HOU`) or a city (such as `Houston` or `Portland, United States`). It looks the places up in a frozen snapshot of
-the public [OpenFlights](https://openflights.org/data) airport and route data, searches the nonstop flights, and
-returns every airport of a route between them, with as many flights as it takes, or says why there is none. A
-deterministic verifier, with no model, accepts any route of real nonstop flights. It does not need to be the shortest
+the public [OpenFlights](https://openflights.org/data) airport and route data, searches the flights between airports, and
+returns every airport of a route between them, changing planes as often as it takes, or says why there is none. A
+deterministic verifier, with no model, accepts any route of real flights. It does not need to be the shortest
 route.
 
 ## Tools
@@ -12,11 +12,11 @@ route.
 | Tool | Does |
 |---|---|
 | `find_airports` | Gives every airport a place names, with each one's city, country and counts of flights out and in. It fails with "no such airport" or "no such city" when the place names nothing |
-| `next_airports` | Takes one step of a breadth-first search. It gives every airport one nonstop flight away from some airports, `forward` (where they fly) or `backward` (what flies to them), each with the airport it was reached `via` |
+| `next_airports` | Takes one step of a breadth-first search. It gives every airport one flight away from some airports, `forward` (where they fly) or `backward` (what flies to them), each with the airport it was reached `via` |
 
 | Task | Does |
 |---|---|
-| `plan-flight-route` | Finds a route of nonstop flights from the origin to the destination, as many as it takes, or says why there is none. Runner `agent`, with both tools |
+| `plan-flight-route` | Finds a route of connecting flights from the origin to the destination, changing planes as often as it takes, or says why there is none. Runner `agent`, with both tools |
 
 Input: `{"origin": "Houston", "destination": "London"}`.
 Output: `{"status": "found", "airports": ["HOU", "ATL", "LHR"]}`, or another status with `"airports": []`.
@@ -54,7 +54,7 @@ For `found`, the verifier recomputes the status from the data and then checks `a
 
 | Answer | Verdict |
 |---|---|
-| Any route of real nonstop flights from an origin airport to a destination airport, however many | valid, score 1, even when it is not the shortest (`HOU`, `ATL`, `JFK`, `BOS`, `LHR` for `HOU` to `London`) |
+| Any route of real flights from an origin airport to a destination airport, however many | valid, score 1, even when it is not the shortest (`HOU`, `ATL`, `JFK`, `BOS`, `LHR` for `HOU` to `London`) |
 | A connection through another airport of the origin's or destination's city | valid, if every flight is real |
 | Fewer than two airports, or `[]` | invalid |
 | An airport twice (a loop), a code no airport has, or a lowercase code | invalid |
@@ -147,8 +147,9 @@ pinned in `tests/build_data.py` by SHA-256. It is made available under the
 `build_data.py` keeps:
 
 - each airport with an IATA code of three capital letters (6,071);
-- each route with no stops, between two different airports that the airport file lists. The airline is dropped, so 37,041 one-way
-  flights remain out of 67,663 rows.
+- each flight between two different airports that the airport file lists, dropping the 11 rows whose plane lands
+  somewhere on the way (`stops` above 0), because the data does not say where. The airline is dropped too, so 37,041
+  one-way flights remain out of 67,663 rows. A route changes planes at every airport between its two ends.
 
 ## Limitations
 

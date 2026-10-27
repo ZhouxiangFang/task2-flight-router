@@ -1,7 +1,7 @@
 _ > nanoagent.plugin.v0001.ManifestConfig:
 id: flight-router
 name: Flight Router
-version: 0.1.0
+version: 0.2.0
 status: ready
 spec: nanoagent.plugin/v0001
 
@@ -21,23 +21,23 @@ tools > dict[contract.Tool, nanoagent.plugin.v0001.ToolConfig]:
     description: |-
       Find every airport a place names. Set place to the origin or the destination from the task input, unchanged.
       Three capital letters, such as HOU, are an airport's IATA code. Anything else is a city name, matched whatever its case and accents; a city in several countries names the airports of all of them, and "Portland, United States" keeps one country's.
-      Returns {"place": "<place>", "kind": "airport" or "city", "airports": [{"code", "city", "country", "flights_out", "flights_in"}, ...]}, sorted by code. flights_out counts the airports it flies to nonstop, flights_in those that fly to it.
+      Returns {"place": "<place>", "kind": "airport" or "city", "airports": [{"code", "city", "country", "flights_out", "flights_in"}, ...]}, sorted by code. flights_out counts the airports it has a flight to, flights_in those that have a flight to it.
       A place that names nothing returns an error that starts "no such airport" or "no such city".
   next_airports:
     description: |-
-      Take one step of a breadth-first search: every airport one nonstop flight away from some airports. Set airports to IATA codes, each once, and direction to forward (the airports they fly to) or backward (the airports that fly to them).
+      Take one step of a breadth-first search: every airport one flight away from some airports. Set airports to IATA codes, each once, and direction to forward (the airports they fly to) or backward (the airports that fly to them).
       Returns {"reached": [{"airport": "<code>", "via": "<code>"}, ...]}, sorted by airport, each airport once and none of those asked about. via is the asked-about airport it was reached from: forward, via flies to airport; backward, airport flies to via. It may include airports you reached earlier. An empty list means no flight leads further. A code no airport has returns an error.
       For example, forward from ["AKN"] gives [{"airport": "ANC", "via": "AKN"}, ...]: AKN flies to ANC.
 
 # One entry per contract.Task; its input class is contract.TASKS's.
 tasks > dict[contract.Task, nanoagent.plugin.v0001.TaskConfig]:
   plan-flight-route:
-    description: Given an origin and a destination, each an airport code or a city, find a route of nonstop flights between them, as many as it takes, or say why there is none
+    description: Given an origin and a destination, each an airport code or a city, find a route of connecting flights between them, changing planes as often as it takes, or say why there is none
     runner: agent
     tools: [find_airports, next_airports]
     reference: null
     instructions: |-
-      Submit {"status": ..., "airports": [...]}: airports is the route's IATA codes in flying order, origin airport first and destination airport last, empty unless status is found. Any route of real nonstop flights is accepted, however many flights and not only the shortest, but no airport may appear twice. Make each turn's calls in parallel: turns are limited.
+      Submit {"status": ..., "airports": [...]}: airports is the route's IATA codes in flying order, origin airport first and destination airport last, empty unless status is found. Any route of real flights is accepted, changing planes at each airport between, however many flights and not only the shortest, but no airport may appear twice. Make each turn's calls in parallel: turns are limited.
       1. Call find_airports for the origin and for the destination. If the origin's call fails, submit no_such_airport or no_such_city, as its error starts; otherwise, if the destination's fails, do the same for it. If the two share an airport, submit same_place. If every origin airport has flights_out 0, or every destination airport has flights_in 0, submit no_flight.
       2. Search from both ends. Keep a forward map F, every airport reached from the origin airports with the airport it was reached from (the origin airports themselves have none), and a backward map B, the same from the destination airports. The forward frontier starts as the origin airports, the backward frontier as the destination airports.
       3. Each turn, if both frontiers have at most 10 airports, call next_airports forward on the forward frontier and backward on the backward frontier; otherwise call it only for the smaller frontier, forward or backward as it is. Add each reached airport its map does not yet hold, with its via; those new airports are that side's next frontier.

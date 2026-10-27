@@ -1,4 +1,4 @@
-"""The airports and the nonstop flights between them: a frozen OpenFlights snapshot, built by
+"""The airports and the flights between them: a frozen OpenFlights snapshot, built by
 tests/build_data.py from tests/openflights/ (commit e539814f664c, ODbL), which says how.
 
 This is the one copy of the data. The plugin's tools read it, and the verifier judges every tool output and every
@@ -6081,7 +6081,7 @@ AIRPORTS = {
     "ZZV": ("Zanesville", "United States"),
 }
 
-# code -> the codes of the airports it has a nonstop flight to, space-separated and sorted
+# code -> the codes of the airports it has a flight to, space-separated and sorted
 FLIGHTS = {
     "AAE": "ALG CDG IST LYS MRS ORN ORY",
     "AAL": "AAR AGP ALC AMS ARN BCN BLL CPH IST LGW OSL PMI SVG",

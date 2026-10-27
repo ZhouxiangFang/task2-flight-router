@@ -87,7 +87,7 @@ def codes_problem(codes):
 
 
 def next_reached(airports, direction):
-    """Every airport one nonstop flight from ``airports`` in ``direction`` and not among them, sorted, each mapped to
+    """Every airport one flight from ``airports`` in ``direction`` and not among them, sorted, each mapped to
     the first of ``airports`` by code that it is reached from."""
     flights = DEPARTURES if direction is Direction.FORWARD else ARRIVALS
     asked = set(airports)
@@ -100,7 +100,7 @@ def next_reached(airports, direction):
 
 
 def fewest_legs(origins, destinations):
-    """The fewest nonstop flights from one of ``origins`` to one of ``destinations``, or None when no route joins them
+    """The fewest flights from one of ``origins`` to one of ``destinations``, or None when no route joins them
     (breadth-first search, one flight further each round, until nothing new is reached)."""
     targets = set(destinations)
     reached = set(origins)
@@ -144,7 +144,7 @@ def expected(origin, destination):
 
 
 def route_problem(route, origins, destinations):
-    """How ``route`` fails to fly from one of ``origins`` to one of ``destinations`` by nonstop flights, as many as
+    """How ``route`` fails to fly from one of ``origins`` to one of ``destinations`` by flights, as many as
     it takes, as a verdict's message, score and details, or None."""
     legs = len(route) - 1
     if legs < 1:

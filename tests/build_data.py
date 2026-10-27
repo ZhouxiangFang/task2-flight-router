@@ -8,8 +8,9 @@ against SHA256 before anything is read. The rules:
 - An airport is a row of airports.dat with an IATA code of three capital letters (which leaves out "\\N" and DU9, a
   Canadian field with no flights); its city and country are kept as written ("\\N" becomes an empty city, which no
   city name finds).
-- A flight is a row of routes.dat with no stops, between two different airports that airports.dat has; the airline
-  is dropped, so a flight is a pair of airports, and the pair is kept once however many airlines fly it.
+- A flight is a row of routes.dat between two different airports that airports.dat has, leaving out the rows whose
+  plane lands on the way (stops above 0), which do not say where; the airline is dropped, so a flight is a pair of
+  airports, and the pair is kept once however many airlines fly it.
 """
 
 from __future__ import annotations
@@ -61,7 +62,7 @@ def quoted(text: str) -> str:
 def render(airports: dict[str, tuple[str, str]], flights: dict[str, list[str]]) -> str:
     count = sum(map(len, flights.values()))
     lines = [
-        '"""The airports and the nonstop flights between them: a frozen OpenFlights snapshot, built by',
+        '"""The airports and the flights between them: a frozen OpenFlights snapshot, built by',
         "tests/build_data.py from tests/openflights/ (commit " + COMMIT[:12] + ", ODbL), which says how.",
         "",
         "This is the one copy of the data. The plugin's tools read it, and the verifier judges every tool output and every",
@@ -74,7 +75,7 @@ def render(airports: dict[str, tuple[str, str]], flights: dict[str, list[str]]) 
         *(f"    {quoted(code)}: ({quoted(city)}, {quoted(country)})," for code, (city, country) in airports.items()),
         "}",
         "",
-        "# code -> the codes of the airports it has a nonstop flight to, space-separated and sorted",
+        "# code -> the codes of the airports it has a flight to, space-separated and sorted",
         "FLIGHTS = {",
         *(f"    {quoted(code)}: {quoted(' '.join(destinations))}," for code, destinations in flights.items()),
         "}",

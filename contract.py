@@ -41,7 +41,7 @@ PLACE = (
 )
 CODE = "An airport's IATA code, three capital letters"
 STATUS = (
-    "found: airports is a route of nonstop flights, as many as it takes; no_such_airport: the origin, or else the destination, is "
+    "found: airports is a route of flights, changing planes as often as it takes; no_such_airport: the origin, or else the destination, is "
     "three capital letters that no airport has; no_such_city: the origin, or else the destination, is a name no city "
     "has; same_place: an airport is both an origin and a destination; no_flight: no origin airport has a flight out, "
     "or no destination airport has a flight in; no_route: there are flights, but no route of any length"
@@ -60,7 +60,7 @@ class RouteOutput(Output):
     airports: Annotated[
         list[str],
         "Every airport of the route in flying order, as IATA codes: an origin airport, the connections, then a "
-        "destination airport, none twice, each with a nonstop flight to the next; empty unless status is found",
+        "destination airport, none twice, each with a flight to the next; empty unless status is found",
     ]
 
 
@@ -74,8 +74,8 @@ class Airport(Output):
     code: Annotated[str, CODE]
     city: Annotated[str, "Its city, as the data writes it; empty when the data has none"]
     country: Annotated[str, "Its country"]
-    flights_out: Annotated[int, "How many airports it has a nonstop flight to"]
-    flights_in: Annotated[int, "How many airports have a nonstop flight to it"]
+    flights_out: Annotated[int, "How many airports it has a flight to"]
+    flights_in: Annotated[int, "How many airports have a flight to it"]
 
 
 @dataclass
@@ -90,7 +90,7 @@ class NextInput(Output):
     airports: Annotated[list[str], "IATA codes of airports, each once: 1 or more"]
     direction: Annotated[
         Direction,
-        "forward: the airports these fly to nonstop; backward: the airports that fly nonstop to these",
+        "forward: the airports these have a flight to; backward: the airports that have a flight to these",
     ]
 
 
@@ -108,7 +108,7 @@ class Reached(Output):
 class NextOutput(Output):
     reached: Annotated[
         list[Reached],
-        "Every airport one nonstop flight away in the direction asked, each once, sorted by airport; empty when none",
+        "Every airport one flight away in the direction asked, each once, sorted by airport; empty when none",
     ]
 
 
