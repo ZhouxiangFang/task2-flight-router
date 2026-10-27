@@ -1,13 +1,12 @@
 _ > nanoagent.plugin.v0001.ProductConfig:
-tagline: "Find a route of connecting flights between two airports or cities"
-summary: "Input: an origin and a destination, each an airport code such as HOU or a city such as Houston or Portland, United States. The agent looks both places up in a frozen snapshot of the public OpenFlights data, then searches outward from both ends until the two searches meet, changing planes as often as it takes. Output: a status and the route's airports in flying order. The status is found, with a route such as HOU, ATL, LHR for Houston to London; or else no_such_airport, no_such_city, same_place, no_flight or no_route, each with an empty route. A deterministic verifier checks every flight against the data."
+tagline: "Find connecting flights between airports or cities"
+summary: "Enter an origin and destination, such as Houston and London. The agent searches a fixed OpenFlights dataset and returns a route, or explains why none exists. Every flight is checked against the data."
 highlights:
-  - "Any route of real flights passes, however many changes of plane it takes and not only the shortest"
-  - "Airport codes or city names, with case, accents and a country to tell cities apart"
-  - "Every way a trip can fail has its own status: a code or city that does not exist, the same place twice, an airport with no flights, or no route at all"
-  - "No model and no network in the verifier: 6,071 airports and 37,041 flights, pinned by SHA-256"
+  - "Use airport codes, city names, or a city and country"
+  - "Accepts any valid route without repeated airports"
+  - "Searches 6,071 airports and 37,041 directed connections"
+  - "Uses historical routes, without schedules or prices"
 steps:
-  - "Ask for a route by code or city, such as \"Find flights from Houston to London\""
-  - "The agent looks up the airports of both places"
-  - "It searches the flights from both ends until the two searches meet or one runs out"
-  - "It returns the route's airports or says why there is none, and the verifier judges every flight"
+  - "Ask: Find a route from Houston to London"
+  - "The agent looks up airports and searches their connections"
+  - "View the route and its verification verdict"

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nanoagent-flight-router"
-version = "0.2.0"
-description = "Find a route of connecting flights between two airports or cities: a NanoAgent plugin"
+version = "0.3.0"
+description = "Find connecting flights between airports or cities."
 requires-python = ">=3.12"
 dependencies = ["mcp>=1.27,<2", "slimconfig"]
 

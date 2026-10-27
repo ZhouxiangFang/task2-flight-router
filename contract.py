@@ -36,22 +36,22 @@ class Direction(Enum):
 
 
 PLACE = (
-    "An airport's IATA code, exactly three capital letters such as HOU; or a city name such as Houston, or a city "
-    "and its country such as Portland, United States. A city name matches whatever its case and accents."
+    "Three-letter uppercase IATA code (HOU), city (Houston), or city and country (Portland, United States). "
+    "City matching ignores case and accents."
 )
 CODE = "An airport's IATA code, three capital letters"
 STATUS = (
-    "found: airports is a route of flights, changing planes as often as it takes; no_such_airport: the origin, or else the destination, is "
-    "three capital letters that no airport has; no_such_city: the origin, or else the destination, is a name no city "
-    "has; same_place: an airport is both an origin and a destination; no_flight: no origin airport has a flight out, "
-    "or no destination airport has a flight in; no_route: there are flights, but no route of any length"
+    "found: valid route; no_such_airport: unknown IATA code; no_such_city: unknown city; "
+    "same_place: origin and destination share an airport; no_flight: all origins lack outgoing flights or "
+    "all destinations lack incoming flights; no_route: flights exist but no route connects the places. "
+    "Origin lookup errors take precedence over destination errors."
 )
 
 
 @dataclass
 class RouteInput(Output):
-    origin: Annotated[str, "Where the trip starts: an airport's IATA code or a city, as find_airports reads a place"]
-    destination: Annotated[str, "Where the trip ends: an airport's IATA code or a city, as find_airports reads a place"]
+    origin: Annotated[str, "Starting place: IATA code, city, or city and country"]
+    destination: Annotated[str, "Destination: IATA code, city, or city and country"]
 
 
 @dataclass
@@ -59,8 +59,7 @@ class RouteOutput(Output):
     status: Annotated[Status, STATUS]
     airports: Annotated[
         list[str],
-        "Every airport of the route in flying order, as IATA codes: an origin airport, the connections, then a "
-        "destination airport, none twice, each with a flight to the next; empty unless status is found",
+        "IATA codes from origin to destination, without repeats and with a flight between each pair; empty unless found",
     ]
 
 
